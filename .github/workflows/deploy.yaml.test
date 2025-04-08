@@ -1,0 +1,65 @@
+name: Build and Deploy to AKS
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  ACR_NAME: yourACRName
+  AKS_CLUSTER_NAME: yourAKSCluster
+  AKS_RESOURCE_GROUP: yourResourceGroup
+  NAMESPACE: your-namespace
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Build and push Docker images to ACR
+      run: |
+        az acr login --name ${{ env.ACR_NAME }}
+        
+        # Build and push client
+        docker build -t ${{ env.ACR_NAME }}.azurecr.io/client:${{ env.IMAGE_TAG }} ./client
+        docker push ${{ env.ACR_NAME }}.azurecr.io/client:${{ env.IMAGE_TAG }}
+        
+        # Build and push microservices
+        for service in service-one service-two service-three; do
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/$service:${{ env.IMAGE_TAG }} ./services/$service
+          docker push ${{ env.ACR_NAME }}.azurecr.io/$service:${{ env.IMAGE_TAG }}
+        done
+    
+    - name: Set AKS context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+    
+    - name: Create namespace if not exists
+      run: |
+        kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+    
+    - name: Deploy to AKS
+      run: |
+        # Replace placeholders in kubernetes manifests
+        for file in kubernetes/*.yaml; do
+          sed -i "s|\${ACR_NAME}|${{ env.ACR_NAME }}|g" $file
+          sed -i "s|\${IMAGE_TAG}|${{ env.IMAGE_TAG }}|g" $file
+        done
+        
+        # Apply kubernetes manifests
+        kubectl apply -f kubernetes/ -n ${{ env.NAMESPACE }}
+        
+        # Wait for deployments to be ready
+        kubectl rollout status deployment/service-one -n ${{ env.NAMESPACE }}
+        kubectl rollout status deployment/service-two -n ${{ env.NAMESPACE }}
+        kubectl rollout status deployment/service-three -n ${{ env.NAMESPACE }}
+        kubectl rollout status deployment/client -n ${{ env.NAMESPACE }}

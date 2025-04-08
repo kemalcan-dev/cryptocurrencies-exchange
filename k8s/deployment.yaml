@@ -1,0 +1,76 @@
+# deployment.yaml for a microservice
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-one
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-one
+  template:
+    metadata:
+      labels:
+        app: service-one
+    spec:
+      containers:
+      - name: service-one
+        image: ${ACR_NAME}.azurecr.io/service-one:${IMAGE_TAG}
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"
+---
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-one
+spec:
+  selector:
+    app: service-one
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: ClusterIP
+---
+# ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/service-one
+        pathType: Prefix
+        backend:
+          service:
+            name: service-one
+            port:
+              number: 80
+      - path: /api/service-two
+        pathType: Prefix
+        backend:
+          service:
+            name: service-two
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: client
+            port:
+              number: 80
