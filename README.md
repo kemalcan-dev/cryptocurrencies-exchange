@@ -1,6 +1,6 @@
-# Simple Cryptocurrency Exchange
+# Cryptocurrency Exchange
 
-This project is a simple Cryptocurrency exchange application built using `JavaScript`, `Node.js`, `Express`, and `MongoDB` as the database. The API documentation is available through `Swagger`, and the project can be containerized using `Docker`.
+This project is a Cryptocurrency exchange application built using `JavaScript`, `Node.js`, `Express`, and `MongoDB` as the database. The API documentation is available through `Swagger`, and the project can be containerized using `Docker`.
 
 ## Project Overview
 
@@ -11,7 +11,7 @@ This project is a simple Cryptocurrency exchange application built using `JavaSc
 
 ## Database Entity-Relationship Diagram (ERD)
 
-![alt text](https://github.com/Little-BlackCat/simple-cryptocurrencies-exchange/blob/main/images/Cryptocurrency%20exchange.svg "Cryptocurrency exchange")
+![alt text](https://github.com/kemalcan-dev/cryptocurrencies-exchange/blob/main/images/Cryptocurrency%20exchange.svg "Cryptocurrency exchange")
 
 ## Prerequisites
 
@@ -22,11 +22,11 @@ This project is a simple Cryptocurrency exchange application built using `JavaSc
 1. Clone the project from Git:
 
    ```bash
-   git clone git@github.com:Little-BlackCat/simple-cryptocurrencies-exchange.git
+   git clone https://github.com/kemalcan-dev/cryptocurrencies-exchange.git
    ```
 2. Navigate to the project directory.
     ```bash
-    cd simple-cryptocurrencies-exchange
+    cd cryptocurrencies-exchange
     ```
 3. Build and start the project using Docker Compose:
     ```bash
@@ -36,13 +36,13 @@ This command will build the project and start the containers in detached mode.
 
 The project should now be up and running.
 
-![alt text](https://github.com/Little-BlackCat/simple-cryptocurrencies-exchange/blob/main/images/docker.png "docker")
+![alt text](https://github.com/kemalcan-dev/cryptocurrencies-exchange/blob/main/images/docker.png "docker")
 
 ## Access the Documentation
 You can access the API documentation using Swagger at the following URL:
 http://localhost:3000/api-docs
 
-![alt text](https://github.com/Little-BlackCat/simple-cryptocurrencies-exchange/blob/main/images/swagger-docs.png "swagger-docs")
+![alt text](https://github.com/kemalcan-dev/cryptocurrencies-exchange/blob/main/images/swagger-docs.png "swagger-docs")
 
 Enjoy using the Cryptocurrency Exchange project!
 
@@ -55,4 +55,4 @@ docker-compose down -v
 
 This ensures a clean shutdown and removes any persisted data volumes.
 
-That's it! You now know how to run and interact with the "Simple Cryptocurrency Exchange" project using Docker.
+That's it! You now know how to run and interact with the "Cryptocurrency Exchange" project using Docker.
